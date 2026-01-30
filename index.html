@@ -43,6 +43,101 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 10px;
+        }
+
+        #gameWrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        #leftPanel,
+        #rightPanel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 120px;
+            padding: 10px;
+            color: #ffd700;
+            font-size: 14px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        #leftPanel {
+            align-items: flex-start;
+        }
+
+        #rightPanel {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .panel-stat {
+            background: rgba(10, 0, 30, 0.8);
+            border: 2px solid #dc143c;
+            border-radius: 8px;
+            padding: 10px 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .panel-stat .label {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 3px;
+        }
+
+        .panel-stat .value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #snapPanel {
+            border-color: #dc143c;
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        #snapPanel .value {
+            color: #dc143c;
+            text-shadow: 0 0 15px #dc143c;
+        }
+
+        #progressPanel {
+            border-color: #c77dff;
+        }
+
+        #progressPanel .value {
+            color: #c77dff;
+            font-size: 14px;
+        }
+
+        #controlsPanel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: rgba(220, 20, 60, 0.2);
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #ffd700;
+        }
+
+        .control-btn:hover {
+            background: rgba(220, 20, 60, 0.4);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+        }
+
+        .control-btn.active {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
         }
 
         #gameCanvas {
@@ -52,6 +147,54 @@
                 inset 0 0 60px rgba(220, 20, 60, 0.1);
             border-radius: 4px;
             background: radial-gradient(ellipse at center, rgba(10, 0, 30, 0.8) 0%, rgba(5, 0, 15, 0.95) 100%);
+        }
+
+        /* Mobile Keyboard */
+        #mobileKeyboard {
+            display: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            max-width: 100%;
+            padding: 10px;
+            background: rgba(10, 0, 30, 0.9);
+            border-radius: 10px;
+            border: 2px solid #dc143c;
+        }
+
+        .key-btn {
+            width: 32px;
+            height: 40px;
+            background: linear-gradient(180deg, #2a1a3e 0%, #1a0a2e 100%);
+            border: 2px solid #c77dff;
+            border-radius: 6px;
+            color: #ffd700;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-shadow: 0 0 5px #ffd700;
+        }
+
+        .key-btn:hover,
+        .key-btn:active {
+            background: linear-gradient(180deg, #4a2a5e 0%, #3a1a4e 100%);
+            box-shadow: 0 0 15px rgba(199, 125, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .key-btn.special {
+            width: 70px;
+            font-size: 12px;
+            background: linear-gradient(180deg, #3a1a2e 0%, #2a0a1e 100%);
+            border-color: #dc143c;
+        }
+
+        /* Show keyboard on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            #mobileKeyboard {
+                display: flex;
+            }
         }
 
         #ui {
@@ -420,63 +563,130 @@
 </head>
 
 <body>
+    <!-- Audio Elements -->
+    <audio id="bgMusic" loop>
+        <source src="https://opengameart.org/sites/default/files/audio_preview/Space%20Ambient.ogg.mp3"
+            type="audio/mpeg">
+    </audio>
+    <audio id="sfxShoot" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9xAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtxAACAg4"
+            type="audio/wav">
+    </audio>
+    <audio id="sfxExplosion" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9xAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtxAAB/f4CA"
+            type="audio/wav">
+    </audio>
+    <audio id="sfxSnap" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9xAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtxAAB/gH9/gA=="
+            type="audio/wav">
+    </audio>
+
     <div id="gameContainer">
-        <canvas id="gameCanvas" width="900" height="700"></canvas>
+        <div id="gameWrapper">
+            <!-- Left Panel - Score & Controls -->
+            <div id="leftPanel">
+                <div class="panel-stat" id="scorePanel">
+                    <div class="label">SCORE</div>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="panel-stat" id="wavePanel">
+                    <div class="label">WAVE</div>
+                    <div class="value" id="level">1</div>
+                </div>
+                <div id="controlsPanel">
+                    <button class="control-btn" id="pauseBtn" title="Pause (ESC)">⏸️</button>
+                    <button class="control-btn active" id="musicBtn" title="Music">🎵</button>
+                    <button class="control-btn active" id="sfxBtn" title="Sound Effects">🔊</button>
+                </div>
+            </div>
 
-        <div id="ui">
-            <div id="score">SCORE: 0</div>
-            <div id="level">WAVE: 1</div>
+            <!-- Center - Canvas Area -->
+            <div id="canvasWrapper">
+                <canvas id="gameCanvas" width="900" height="700"></canvas>
+
+                <div id="pauseOverlay">
+                    <h2>⏸️ PAUSED</h2>
+                </div>
+
+                <div id="currentWord"></div>
+
+                <div id="startScreen">
+                    <h1>DOOMSDAY</h1>
+                    <p>
+                        The universe is under attack!<br>
+                        Type words to destroy enemies.<br>
+                        Use Ironman's Snap (Enter) to clear all threats!<br>
+                        <em style="font-size: 14px; opacity: 0.7;">First snap at 25 words, then +5 more each time</em>
+                    </p>
+                    <button id="startBtn">SAVE THE UNIVERSE</button>
+                    <button id="viewLeaderboardBtn" style="margin-top: 10px;">🏆 LEADERBOARD</button>
+                </div>
+
+                <div id="gameOver">
+                    <h1>GAME OVER</h1>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <button id="restartBtn">PLAY AGAIN</button>
+                    <button id="gameOverLeaderboardBtn" style="margin-top: 10px;">🏆 LEADERBOARD</button>
+                </div>
+
+                <div id="leaderboardModal">
+                    <h2>🏆 LEADERBOARD</h2>
+                    <div id="leaderboardList"></div>
+                    <button id="closeLeaderboard">CLOSE</button>
+                </div>
+
+                <div id="nameInputModal">
+                    <h2>🎉 NEW HIGH SCORE!</h2>
+                    <p>Enter your name:</p>
+                    <input type="text" id="playerNameInput" maxlength="15" placeholder="Your Name">
+                    <button id="saveScoreBtn">SAVE SCORE</button>
+                </div>
+            </div> <!-- End canvasWrapper -->
+
+            <!-- Right Panel - Snap & Progress -->
+            <div id="rightPanel">
+                <div class="panel-stat" id="snapPanel">
+                    <div class="label">⚡ SNAP</div>
+                    <div class="value" id="snapCount">0</div>
+                </div>
+                <div class="panel-stat" id="progressPanel">
+                    <div class="label">NEXT SNAP</div>
+                    <div class="value" id="snapProgress">0/25</div>
+                </div>
+            </div>
+        </div> <!-- End gameWrapper -->
+
+        <!-- Mobile Keyboard -->
+        <div id="mobileKeyboard">
+            <button class="key-btn">Q</button>
+            <button class="key-btn">W</button>
+            <button class="key-btn">E</button>
+            <button class="key-btn">R</button>
+            <button class="key-btn">T</button>
+            <button class="key-btn">Y</button>
+            <button class="key-btn">U</button>
+            <button class="key-btn">I</button>
+            <button class="key-btn">O</button>
+            <button class="key-btn">P</button>
+            <button class="key-btn">A</button>
+            <button class="key-btn">S</button>
+            <button class="key-btn">D</button>
+            <button class="key-btn">F</button>
+            <button class="key-btn">G</button>
+            <button class="key-btn">H</button>
+            <button class="key-btn">J</button>
+            <button class="key-btn">K</button>
+            <button class="key-btn">L</button>
+            <button class="key-btn">Z</button>
+            <button class="key-btn">X</button>
+            <button class="key-btn">C</button>
+            <button class="key-btn">V</button>
+            <button class="key-btn">B</button>
+            <button class="key-btn">N</button>
+            <button class="key-btn">M</button>
+            <button class="key-btn special" id="snapBtn">⚡ SNAP</button>
         </div>
-
-        <div id="superpower">
-            <span class="snap-icon">⚡</span> SNAP: <span id="snapCount">0</span>
-        </div>
-
-        <div id="snapProgress">Next: 0/25</div>
-
-        <div id="gameControls">
-            <button class="control-btn" id="pauseBtn" title="Pause (P)">⏸️</button>
-            <button class="control-btn active" id="musicBtn" title="Music">🎵</button>
-            <button class="control-btn active" id="sfxBtn" title="Sound Effects">🔊</button>
-        </div>
-
-        <div id="pauseOverlay">
-            <h2>⏸️ PAUSED</h2>
-        </div>
-
-        <div id="currentWord"></div>
-
-        <div id="startScreen">
-            <h1>DOOMSDAY</h1>
-            <p>
-                The universe is under attack!<br>
-                Type words to destroy enemies.<br>
-                Use Ironman's Snap (Enter) to clear all threats!<br>
-                <em style="font-size: 14px; opacity: 0.7;">First snap at 25 words, then +5 more each time</em>
-            </p>
-            <button id="startBtn">SAVE THE UNIVERSE</button>
-            <button id="viewLeaderboardBtn" style="margin-top: 10px;">🏆 LEADERBOARD</button>
-        </div>
-
-        <div id="gameOver">
-            <h1>GAME OVER</h1>
-            <p>Final Score: <span id="finalScore">0</span></p>
-            <button id="restartBtn">PLAY AGAIN</button>
-        </div>
-
-        <div id="leaderboardModal">
-            <h2>🏆 LEADERBOARD</h2>
-            <div id="leaderboardList"></div>
-            <button id="closeLeaderboard">CLOSE</button>
-        </div>
-
-        <div id="nameInputModal">
-            <h2>🎉 NEW HIGH SCORE!</h2>
-            <p>Enter your name:</p>
-            <input type="text" id="playerNameInput" maxlength="15" placeholder="Your Name">
-            <button id="saveScoreBtn">SAVE SCORE</button>
-        </div>
-    </div>
+    </div> <!-- End gameContainer -->
 
     <script>
         // Word List - Varied difficulty and themes
@@ -987,6 +1197,7 @@
                 targetEnemy // Pass the enemy reference
             );
             bullets.push(bullet);
+            playShootSound();
         }
 
         function handleKeyPress(key) {
@@ -1064,8 +1275,8 @@
         }
 
         function updateUI() {
-            document.getElementById('score').textContent = `SCORE: ${score}`;
-            document.getElementById('level').textContent = `WAVE: ${wave}`;
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = wave;
         }
 
         function updateSnapUI() {
@@ -1073,7 +1284,7 @@
             // Update progress to next snap
             const progressElement = document.getElementById('snapProgress');
             if (progressElement) {
-                progressElement.textContent = `Next: ${wordsDestroyed}/${nextSnapThreshold}`;
+                progressElement.textContent = `${wordsDestroyed}/${nextSnapThreshold}`;
             }
         }
 
@@ -1343,76 +1554,6 @@
                 ctx.stroke();
                 ctx.restore();
             }
-
-            // Draw UI elements on canvas
-            drawUI();
-        }
-
-        function drawUI() {
-            // Only draw during gameplay
-            if (gameState !== 'playing') return;
-
-            ctx.save();
-            ctx.font = '16px "Courier New", monospace';
-            ctx.textAlign = 'left';
-
-            // Score (top-left)
-            ctx.fillStyle = '#ffd700';
-            ctx.shadowColor = '#ffd700';
-            ctx.shadowBlur = 10;
-            ctx.fillText(`SCORE: ${score}`, 15, 25);
-
-            // Wave (below score)
-            ctx.fillText(`WAVE: ${wave}`, 15, 50);
-            ctx.shadowBlur = 0;
-
-            // Snap counter (top-right)
-            ctx.textAlign = 'right';
-            ctx.fillStyle = '#dc143c';
-            ctx.shadowColor = '#dc143c';
-            ctx.shadowBlur = 15;
-            ctx.fillText(`⚡ SNAP: ${snapsAvailable}`, CANVAS_WIDTH - 15, 25);
-
-            // Next snap progress (below snap counter)
-            ctx.font = '12px "Courier New", monospace';
-            ctx.fillStyle = '#c77dff';
-            ctx.shadowColor = '#c77dff';
-            ctx.shadowBlur = 8;
-            ctx.fillText(`Next: ${wordsDestroyed}/${nextSnapThreshold}`, CANVAS_WIDTH - 15, 45);
-            ctx.shadowBlur = 0;
-
-            // Control buttons (bottom-left)
-            const btnY = CANVAS_HEIGHT - 20;
-            const btnSpacing = 60;
-
-            // Pause button
-            ctx.fillStyle = gamePaused ? '#00ff88' : 'rgba(220, 20, 60, 0.3)';
-            ctx.fillRect(15, btnY - 30, 45, 35);
-            ctx.strokeStyle = '#dc143c';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(15, btnY - 30, 45, 35);
-            ctx.fillStyle = '#ffd700';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(gamePaused ? '▶️' : '⏸️', 37.5, btnY - 7);
-
-            // Music button
-            const musicX = 15 + btnSpacing;
-            ctx.fillStyle = musicEnabled ? 'rgba(0, 255, 136, 0.2)' : 'rgba(220, 20, 60, 0.3)';
-            ctx.fillRect(musicX, btnY - 30, 45, 35);
-            ctx.strokeStyle = musicEnabled ? '#00ff88' : '#dc143c';
-            ctx.strokeRect(musicX, btnY - 30, 45, 35);
-            ctx.fillText(musicEnabled ? '🎵' : '🔇', musicX + 22.5, btnY - 7);
-
-            // SFX button
-            const sfxX = 15 + btnSpacing * 2;
-            ctx.fillStyle = sfxEnabled ? 'rgba(0, 255, 136, 0.2)' : 'rgba(220, 20, 60, 0.3)';
-            ctx.fillRect(sfxX, btnY - 30, 45, 35);
-            ctx.strokeStyle = sfxEnabled ? '#00ff88' : '#dc143c';
-            ctx.strokeRect(sfxX, btnY - 30, 45, 35);
-            ctx.fillText(sfxEnabled ? '🔊' : '🔈', sfxX + 22.5, btnY - 7);
-
-            ctx.restore();
         }
 
         function gameLoop() {
@@ -1442,9 +1583,15 @@
         function toggleMusic() {
             musicEnabled = !musicEnabled;
             const btn = document.getElementById('musicBtn');
+            const bgMusic = document.getElementById('bgMusic');
             btn.classList.toggle('active', musicEnabled);
             btn.textContent = musicEnabled ? '🎵' : '🔇';
-            // Audio implementation placeholder - add actual audio control here
+
+            if (musicEnabled && gameState === 'playing') {
+                bgMusic.play().catch(e => console.log('Audio play blocked:', e));
+            } else {
+                bgMusic.pause();
+            }
         }
 
         function toggleSfx() {
@@ -1452,7 +1599,68 @@
             const btn = document.getElementById('sfxBtn');
             btn.classList.toggle('active', sfxEnabled);
             btn.textContent = sfxEnabled ? '🔊' : '🔈';
-            // Audio implementation placeholder - add actual audio control here
+        }
+
+        // Audio playback helpers
+        function playShootSound() {
+            if (!sfxEnabled) return;
+            // Create a simple beep using Web Audio API
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.value = 0.1;
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.05);
+            } catch (e) { }
+        }
+
+        function playExplosionSound() {
+            if (!sfxEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 150;
+                oscillator.type = 'sawtooth';
+                gainNode.gain.value = 0.2;
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) { }
+        }
+
+        function playSnapSound() {
+            if (!sfxEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                // Create multiple oscillators for a "snap" sound
+                for (let i = 0; i < 3; i++) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = 400 + i * 200;
+                    osc.type = 'square';
+                    gain.gain.value = 0.15;
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start(audioCtx.currentTime + i * 0.1);
+                    osc.stop(audioCtx.currentTime + 0.5);
+                }
+            } catch (e) { }
+        }
+
+        function startBackgroundMusic() {
+            if (!musicEnabled) return;
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(e => console.log('Audio autoplay blocked'));
         }
 
         // ==================== LEADERBOARD SYSTEM ====================
@@ -1535,34 +1743,7 @@
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', startGame);
 
-        // Canvas click handler for UI buttons
-        canvas.addEventListener('click', (e) => {
-            if (gameState !== 'playing') return;
-
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const x = (e.clientX - rect.left) * scaleX;
-            const y = (e.clientY - rect.top) * scaleY;
-
-            const btnY = CANVAS_HEIGHT - 20;
-            const btnSpacing = 60;
-
-            // Check pause button (15, btnY-30, 45x35)
-            if (x >= 15 && x <= 60 && y >= btnY - 30 && y <= btnY + 5) {
-                togglePause();
-            }
-            // Check music button
-            else if (x >= 15 + btnSpacing && x <= 60 + btnSpacing && y >= btnY - 30 && y <= btnY + 5) {
-                toggleMusic();
-            }
-            // Check SFX button
-            else if (x >= 15 + btnSpacing * 2 && x <= 60 + btnSpacing * 2 && y >= btnY - 30 && y <= btnY + 5) {
-                toggleSfx();
-            }
-        });
-
-        // Pause/Resume controls (keep for backward compatibility but buttons are now on canvas)
+        // Pause/Resume/Audio controls
         document.getElementById('pauseBtn').addEventListener('click', togglePause);
         document.getElementById('musicBtn').addEventListener('click', toggleMusic);
         document.getElementById('sfxBtn').addEventListener('click', toggleSfx);
@@ -1572,6 +1753,9 @@
         document.getElementById('closeLeaderboard').addEventListener('click', hideLeaderboard);
         document.getElementById('saveScoreBtn').addEventListener('click', savePlayerScore);
 
+        // Game over leaderboard button
+        document.getElementById('gameOverLeaderboardBtn').addEventListener('click', showLeaderboard);
+
         // Enter key on name input
         document.getElementById('playerNameInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -1580,7 +1764,19 @@
             }
         });
 
-        // Allow pressing Enter to use Ironman's Snap, P to pause, or start/restart game
+        // Mobile keyboard button handlers
+        document.querySelectorAll('.key-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.id === 'snapBtn') {
+                    useIronmansSnap();
+                } else {
+                    const letter = btn.textContent;
+                    handleKeyPress(letter);
+                }
+            });
+        });
+
+        // Allow pressing Enter to use Ironman's Snap, or start/restart game
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();

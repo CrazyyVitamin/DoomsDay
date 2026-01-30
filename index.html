@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoomsDay - Marvel-Themed Typing Shooter</title>
+    <meta name="description"
+        content="DoomsDay - A Marvel-inspired typing shooter game. Use Ironman's Snap to save the universe!">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0015 0%, #1a0a2e 25%, #16213e 50%, #0f0f23 75%, #0a0015 100%);
+            background-size: 400% 400%;
+            animation: cosmicShift 20s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        @keyframes cosmicShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        #gameContainer {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            border: 3px solid #dc143c;
+            box-shadow: 0 0 40px rgba(220, 20, 60, 0.5),
+                0 0 80px rgba(255, 215, 0, 0.3),
+                inset 0 0 60px rgba(220, 20, 60, 0.1);
+            border-radius: 4px;
+            background: radial-gradient(ellipse at center, rgba(10, 0, 30, 0.8) 0%, rgba(5, 0, 15, 0.95) 100%);
+        }
+
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #ffd700;
+            font-size: 18px;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px rgba(220, 20, 60, 0.5);
+            z-index: 10;
+        }
+
+        #superpower {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #dc143c;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 15px #dc143c, 0 0 30px #ffd700;
+            z-index: 10;
+            padding: 10px 20px;
+            border: 2px solid #dc143c;
+            border-radius: 8px;
+            background: rgba(220, 20, 60, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        #superpower .snap-icon {
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        #currentWord {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffd700;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ffd700, 0 0 40px rgba(220, 20, 60, 0.5);
+            letter-spacing: 4px;
+            z-index: 10;
+        }
+
+        #currentWord .typed {
+            color: #dc143c;
+            text-shadow: 0 0 20px #dc143c;
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #ff3366;
+            z-index: 20;
+            display: none;
+        }
+
+        #gameOver h1 {
+            font-size: 48px;
+            text-shadow: 0 0 30px #ff3366;
+            margin-bottom: 20px;
+        }
+
+        #gameOver p {
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 0 0 15px #ffd700;
+            margin-bottom: 30px;
+        }
+
+        #restartBtn {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px #ffd700;
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
+        }
+
+        #restartBtn:hover {
+            background: #dc143c;
+            color: #ffd700;
+            box-shadow: 0 0 40px rgba(220, 20, 60, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #ffd700;
+            z-index: 20;
+        }
+
+        #startScreen h1 {
+            font-size: 56px;
+            text-shadow: 0 0 40px #ffd700, 0 0 80px rgba(220, 20, 60, 0.6);
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+        }
+
+        #startScreen p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.8;
+            color: #ffd700;
+        }
+
+        #startBtn {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 15px 50px;
+            font-size: 22px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px #ffd700;
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
+        }
+
+        #startBtn:hover {
+            background: #dc143c;
+            color: #ffd700;
+            box-shadow: 0 0 40px rgba(220, 20, 60, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="900" height="700"></canvas>
+
+        <div id="ui">
+            <div id="score">SCORE: 0</div>
+            <div id="level">WAVE: 1</div>
+        </div>
+
+        <div id="superpower">
+            <span class="snap-icon">⚡</span> IRONMAN'S SNAP: <span id="snapCount">0</span>
+        </div>
+
+        <div id="currentWord"></div>
+
+        <div id="startScreen">
+            <h1>DOOMSDAY</h1>
+            <p>
+                The universe is under attack!<br>
+                Type words to destroy enemies.<br>
+                Use Ironman's Snap (Enter) to clear all threats!<br>
+                <em style="font-size: 14px; opacity: 0.7;">Earn 1 snap every 50 words destroyed</em>
+            </p>
+            <button id="startBtn">SAVE THE UNIVERSE</button>
+        </div>
+
+        <div id="gameOver">
+            <h1>GAME OVER</h1>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button id="restartBtn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        // Word List - Varied difficulty and themes
+        const WORD_LIST = [
+            // Easy words (3-4 letters)
+            'hero', 'save', 'time', 'doom', 'fate', 'soul', 'dark', 'fire', 'moon', 'star',
+            'wild', 'free', 'bold', 'fast', 'calm', 'hope', 'fear', 'mind', 'path', 'wind',
+            // Medium words (5-6 letters)
+            'brave', 'chaos', 'dream', 'force', 'magic', 'storm', 'thunder', 'wonder', 'mystic',
+            'cosmic', 'eternal', 'fierce', 'noble', 'quest', 'power', 'realm', 'valor', 'spirit',
+            'dragon', 'knight', 'destiny', 'justice', 'freedom', 'victory', 'legacy', 'odyssey',
+            // Hard words (7+ letters)
+            'adventure', 'champion', 'guardian', 'infinite', 'legendary', 'universe', 'warrior',
+            'destroyer', 'avenger', 'defender', 'conqueror', 'visionary', 'immortal', 'spectacular',
+            'magnificent', 'incredible', 'invincible', 'unstoppable', 'phenomenal', 'extraordinary'
+        ];
+
+        // Game Constants
+        const CANVAS_WIDTH = 900;
+        const CANVAS_HEIGHT = 700;
+        const PLAYER_Y = CANVAS_HEIGHT - 60;
+        const ENEMY_SPAWN_RATE = 2500; // ms between spawns
+        const ENEMY_SPEED_BASE = 0.4;
+        const BULLET_SPEED = 12;
+
+        // Canvas Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game State
+        let gameState = 'start'; // 'start', 'playing', 'gameOver'
+        let score = 0;
+        let wave = 1;
+        let enemies = [];
+        let bullets = [];
+        let particles = [];
+        let stars = [];
+        let lockedEnemy = null;
+        let typedLetters = '';
+        let lastSpawnTime = 0;
+        let spawnInterval = ENEMY_SPAWN_RATE;
+
+        // Ironman's Snap Superpower
+        let wordsDestroyed = 0;
+        let snapsAvailable = 0;
+
+        // Player Object
+        const player = {
+            x: CANVAS_WIDTH / 2,
+            y: PLAYER_Y,
+            width: 50,
+            height: 40
+        };
+
+        // ==================== CLASSES ====================
+
+        class Enemy {
+            constructor(x, y, word) {
+                this.x = x;
+                this.y = y;
+                this.word = word;
+                this.typedIndex = 0; // How many letters have been typed
+                this.width = 40;
+                this.height = 30;
+                this.speed = ENEMY_SPEED_BASE + (wave * 0.05);
+                this.health = word.length;
+                this.maxHealth = word.length;
+                this.glowIntensity = 0;
+                this.wobble = Math.random() * Math.PI * 2;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.wobble += 0.05;
+                this.x += Math.sin(this.wobble) * 0.3;
+
+                // Pulse glow when locked
+                if (this === lockedEnemy) {
+                    this.glowIntensity = 0.5 + Math.sin(Date.now() * 0.01) * 0.3;
+                } else {
+                    this.glowIntensity = Math.max(0, this.glowIntensity - 0.05);
+                }
+            }
+
+            draw() {
+                ctx.save();
+
+                // Glow effect for locked enemy
+                if (this === lockedEnemy) {
+                    ctx.shadowColor = '#ff3366';
+                    ctx.shadowBlur = 20 + this.glowIntensity * 20;
+                }
+
+                // Enemy ship body (wireframe triangle)
+                ctx.strokeStyle = this === lockedEnemy ? '#ff3366' : '#00ff88';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.height);
+                ctx.lineTo(this.x - this.width / 2, this.y);
+                ctx.lineTo(this.x + this.width / 2, this.y);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Inner details
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.height * 0.7);
+                ctx.lineTo(this.x - this.width / 4, this.y + 5);
+                ctx.lineTo(this.x + this.width / 4, this.y + 5);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Engine glow
+                ctx.fillStyle = this === lockedEnemy ? 'rgba(255, 51, 102, 0.6)' : 'rgba(0, 255, 136, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y - 5, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+
+                // Draw word above enemy
+                this.drawWord();
+            }
+
+            drawWord() {
+                const wordY = this.y - 25;
+                const fontSize = 16;
+                ctx.font = `bold ${fontSize}px Courier New`;
+
+                const totalWidth = ctx.measureText(this.word).width;
+                const startX = this.x - totalWidth / 2;
+
+                // Draw each letter
+                for (let i = 0; i < this.word.length; i++) {
+                    const letter = this.word[i];
+                    const letterWidth = ctx.measureText(letter).width;
+                    const letterX = startX + ctx.measureText(this.word.substring(0, i)).width;
+
+                    if (this === lockedEnemy && i < this.typedIndex) {
+                        // Typed letters
+                        ctx.fillStyle = '#ff3366';
+                        ctx.shadowColor = '#ff3366';
+                        ctx.shadowBlur = 10;
+                    } else if (this === lockedEnemy) {
+                        // Remaining letters on locked enemy
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowColor = '#ffffff';
+                        ctx.shadowBlur = 5;
+                    } else {
+                        // Untyped letters on non-locked enemies
+                        ctx.fillStyle = '#00ff88';
+                        ctx.shadowColor = '#00ff88';
+                        ctx.shadowBlur = 8;
+                    }
+
+                    ctx.fillText(letter, letterX, wordY);
+                }
+
+                ctx.shadowBlur = 0;
+            }
+
+            getRemainingWord() {
+                return this.word.substring(this.typedIndex);
+            }
+
+            checkCollision(px, py, pw, ph) {
+                return this.x - this.width / 2 < px + pw / 2 &&
+                    this.x + this.width / 2 > px - pw / 2 &&
+                    this.y + this.height > py - ph / 2 &&
+                    this.y < py + ph / 2;
+            }
+        }
+
+        class Bullet {
+            constructor(startX, startY, targetX, targetY) {
+                this.x = startX;
+                this.y = startY;
+                this.targetX = targetX;
+                this.targetY = targetY;
+
+                const dx = targetX - startX;
+                const dy = targetY - startY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                this.vx = (dx / dist) * BULLET_SPEED;
+                this.vy = (dy / dist) * BULLET_SPEED;
+                this.alive = true;
+                this.trail = [];
+            }
+
+            update() {
+                // Store trail positions
+                this.trail.push({ x: this.x, y: this.y });
+                if (this.trail.length > 8) {
+                    this.trail.shift();
+                }
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Check if bullet is off screen or reached target area
+                if (this.y < 0 || this.y > CANVAS_HEIGHT ||
+                    this.x < 0 || this.x > CANVAS_WIDTH) {
+                    this.alive = false;
+                }
+            }
+
+            draw() {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const alpha = i / this.trail.length;
+                    const size = 2 + alpha * 3;
+                    ctx.fillStyle = `rgba(0, 255, 136, ${alpha * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(this.trail[i].x, this.trail[i].y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Draw bullet
+                ctx.save();
+                ctx.shadowColor = '#00ff88';
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Inner glow
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            checkHit(enemy) {
+                const dx = this.x - enemy.x;
+                const dy = this.y - (enemy.y + enemy.height / 2);
+                return Math.sqrt(dx * dx + dy * dy) < 25;
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8;
+                this.life = 1;
+                this.decay = 0.02 + Math.random() * 0.02;
+                this.size = 2 + Math.random() * 4;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.life -= this.decay;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            isAlive() {
+                return this.life > 0;
+            }
+        }
+
+        // ==================== GAME FUNCTIONS ====================
+
+        function createStars() {
+            stars = [];
+            for (let i = 0; i < 150; i++) {
+                stars.push({
+                    x: Math.random() * CANVAS_WIDTH,
+                    y: Math.random() * CANVAS_HEIGHT,
+                    size: Math.random() * 2,
+                    speed: 0.2 + Math.random() * 0.5,
+                    brightness: Math.random()
+                });
+            }
+        }
+
+        function updateStars() {
+            for (const star of stars) {
+                star.y += star.speed;
+                star.brightness = 0.3 + Math.sin(Date.now() * 0.003 + star.x) * 0.3;
+
+                if (star.y > CANVAS_HEIGHT) {
+                    star.y = 0;
+                    star.x = Math.random() * CANVAS_WIDTH;
+                }
+            }
+        }
+
+        function drawStars() {
+            for (const star of stars) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.shadowColor = '#00ff88';
+            ctx.shadowBlur = 20;
+
+            // Main body (wireframe)
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+
+            // Ship hull
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y - player.height / 2);
+            ctx.lineTo(player.x - player.width / 2, player.y + player.height / 2);
+            ctx.lineTo(player.x - player.width / 4, player.y + player.height / 3);
+            ctx.lineTo(player.x + player.width / 4, player.y + player.height / 3);
+            ctx.lineTo(player.x + player.width / 2, player.y + player.height / 2);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Cockpit
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y - player.height / 4);
+            ctx.lineTo(player.x - player.width / 6, player.y + player.height / 6);
+            ctx.lineTo(player.x + player.width / 6, player.y + player.height / 6);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Engine glow
+            ctx.fillStyle = 'rgba(0, 255, 136, 0.8)';
+            ctx.beginPath();
+            ctx.ellipse(player.x, player.y + player.height / 2 + 5, 8, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function spawnEnemy() {
+            // Get a word that's not currently in use
+            const activeWords = enemies.map(e => e.word);
+            let availableWords = WORD_LIST.filter(w => !activeWords.includes(w));
+
+            if (availableWords.length === 0) {
+                availableWords = WORD_LIST;
+            }
+
+            // Prefer words that don't start with the same letter as existing enemies
+            const usedFirstLetters = enemies.map(e => e.word[0].toLowerCase());
+            let preferredWords = availableWords.filter(w => !usedFirstLetters.includes(w[0].toLowerCase()));
+
+            if (preferredWords.length === 0) {
+                preferredWords = availableWords;
+            }
+
+            const word = preferredWords[Math.floor(Math.random() * preferredWords.length)];
+            const x = 80 + Math.random() * (CANVAS_WIDTH - 160);
+            const enemy = new Enemy(x, -30, word);
+            enemies.push(enemy);
+        }
+
+        function createExplosion(x, y, color = '#00ff88') {
+            for (let i = 0; i < 30; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+            // Add some white sparks
+            for (let i = 0; i < 10; i++) {
+                particles.push(new Particle(x, y, '#ffffff'));
+            }
+        }
+
+        function fireBullet(targetEnemy) {
+            const bullet = new Bullet(
+                player.x,
+                player.y - player.height / 2,
+                targetEnemy.x,
+                targetEnemy.y + targetEnemy.height / 2
+            );
+            bullets.push(bullet);
+        }
+
+        function handleKeyPress(key) {
+            if (gameState !== 'playing') return;
+
+            const letter = key.toLowerCase();
+
+            // If we have a locked target
+            if (lockedEnemy) {
+                const nextLetter = lockedEnemy.getRemainingWord()[0];
+
+                if (letter === nextLetter.toLowerCase()) {
+                    // Correct letter!
+                    lockedEnemy.typedIndex++;
+                    typedLetters += letter;
+
+                    // Fire bullet
+                    fireBullet(lockedEnemy);
+
+                    // Check if word is complete
+                    if (lockedEnemy.typedIndex >= lockedEnemy.word.length) {
+                        // Destroy enemy
+                        createExplosion(lockedEnemy.x, lockedEnemy.y + lockedEnemy.height / 2, '#ff3366');
+                        score += lockedEnemy.word.length * 10;
+                        wordsDestroyed++;
+
+                        // Check if player earned a snap
+                        if (wordsDestroyed % 50 === 0) {
+                            snapsAvailable++;
+                            updateSnapUI();
+                            // Flash effect when snap earned
+                            createSnapEarnedEffect();
+                        }
+
+                        enemies = enemies.filter(e => e !== lockedEnemy);
+                        lockedEnemy = null;
+                        typedLetters = '';
+                        updateUI();
+                    }
+
+                    updateCurrentWordDisplay();
+                }
+                // Wrong letter - do nothing (player must complete current word)
+            } else {
+                // No locked target - try to find an enemy that starts with this letter
+                for (const enemy of enemies) {
+                    if (enemy.word[0].toLowerCase() === letter) {
+                        // Lock onto this enemy
+                        lockedEnemy = enemy;
+                        lockedEnemy.typedIndex = 1;
+                        typedLetters = letter;
+
+                        // Fire bullet
+                        fireBullet(lockedEnemy);
+
+                        // Check if single-letter word (edge case)
+                        if (lockedEnemy.typedIndex >= lockedEnemy.word.length) {
+                            createExplosion(lockedEnemy.x, lockedEnemy.y + lockedEnemy.height / 2, '#ff3366');
+                            score += lockedEnemy.word.length * 10;
+                            wordsDestroyed++;
+
+                            // Check if player earned a snap
+                            if (wordsDestroyed % 50 === 0) {
+                                snapsAvailable++;
+                                updateSnapUI();
+                                createSnapEarnedEffect();
+                            }
+
+                            enemies = enemies.filter(e => e !== lockedEnemy);
+                            lockedEnemy = null;
+                            typedLetters = '';
+                            updateUI();
+                        }
+
+                        updateCurrentWordDisplay();
+                        break;
+                    }
+                }
+            }
+        }
+
+        function updateCurrentWordDisplay() {
+            const display = document.getElementById('currentWord');
+
+            if (lockedEnemy) {
+                let html = '';
+                for (let i = 0; i < lockedEnemy.word.length; i++) {
+                    if (i < lockedEnemy.typedIndex) {
+                        html += `<span class="typed">${lockedEnemy.word[i]}</span>`;
+                    } else {
+                        html += lockedEnemy.word[i];
+                    }
+                }
+                display.innerHTML = html;
+            } else {
+                display.innerHTML = '';
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = `SCORE: ${score}`;
+            document.getElementById('level').textContent = `WAVE: ${wave}`;
+        }
+
+        function updateSnapUI() {
+            document.getElementById('snapCount').textContent = snapsAvailable;
+        }
+
+        function createSnapEarnedEffect() {
+            // Create golden particles across the screen
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * CANVAS_WIDTH;
+                const y = Math.random() * CANVAS_HEIGHT;
+                particles.push(new Particle(x, y, '#ffd700'));
+                particles.push(new Particle(x, y, '#dc143c'));
+            }
+        }
+
+        function useIronmansSnap() {
+            if (gameState !== 'playing' || snapsAvailable <= 0 || enemies.length === 0) return;
+
+            snapsAvailable--;
+            updateSnapUI();
+
+            // Create massive explosion effect
+            createMassiveSnapExplosion();
+
+            // Destroy all enemies with delay for visual effect
+            enemies.forEach((enemy, index) => {
+                setTimeout(() => {
+                    createExplosion(enemy.x, enemy.y + enemy.height / 2, '#ffd700');
+                    createExplosion(enemy.x, enemy.y + enemy.height / 2, '#dc143c');
+                    score += enemy.word.length * 10;
+                    wordsDestroyed++;
+                }, index * 50);
+            });
+
+            // Clear all enemies after animations
+            setTimeout(() => {
+                enemies = [];
+                lockedEnemy = null;
+                typedLetters = '';
+                updateCurrentWordDisplay();
+                updateUI();
+            }, enemies.length * 50 + 200);
+        }
+
+        function createMassiveSnapExplosion() {
+            // Screen-wide particle burst
+            for (let i = 0; i < 200; i++) {
+                const angle = (Math.PI * 2 * i) / 200;
+                const speed = 5 + Math.random() * 10;
+                const x = CANVAS_WIDTH / 2;
+                const y = CANVAS_HEIGHT / 2;
+
+                const particle = new Particle(x, y, i % 2 === 0 ? '#ffd700' : '#dc143c');
+                particle.vx = Math.cos(angle) * speed;
+                particle.vy = Math.sin(angle) * speed;
+                particle.size = 3 + Math.random() * 5;
+                particles.push(particle);
+            }
+
+            // Add some white flashes
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * CANVAS_WIDTH;
+                const y = Math.random() * CANVAS_HEIGHT;
+                particles.push(new Particle(x, y, '#ffffff'));
+            }
+        }
+
+        function checkGameOver() {
+            for (const enemy of enemies) {
+                if (enemy.checkCollision(player.x, player.y, player.width, player.height)) {
+                    gameOver();
+                    return true;
+                }
+
+                // Also end game if enemy goes below screen
+                if (enemy.y > CANVAS_HEIGHT + 50) {
+                    gameOver();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function gameOver() {
+            gameState = 'gameOver';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOver').style.display = 'block';
+            createExplosion(player.x, player.y, '#ff3366');
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            wave = 1;
+            enemies = [];
+            bullets = [];
+            particles = [];
+            lockedEnemy = null;
+            typedLetters = '';
+            lastSpawnTime = Date.now();
+            spawnInterval = ENEMY_SPAWN_RATE;
+
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'none';
+            updateUI();
+            updateCurrentWordDisplay();
+
+            // Spawn initial enemy
+            spawnEnemy();
+        }
+
+        function update() {
+            if (gameState !== 'playing') return;
+
+            // Update stars
+            updateStars();
+
+            // Update enemies
+            for (const enemy of enemies) {
+                enemy.update();
+            }
+
+            // Update bullets
+            for (const bullet of bullets) {
+                bullet.update();
+
+                // Check bullet collisions with locked enemy
+                if (lockedEnemy && bullet.checkHit(lockedEnemy)) {
+                    // Bullet hit - create small particle effect
+                    for (let i = 0; i < 5; i++) {
+                        particles.push(new Particle(bullet.x, bullet.y, '#00ff88'));
+                    }
+                    bullet.alive = false;
+                }
+            }
+            bullets = bullets.filter(b => b.alive);
+
+            // Update particles
+            for (const particle of particles) {
+                particle.update();
+            }
+            particles = particles.filter(p => p.isAlive());
+
+            // Spawn new enemies
+            const now = Date.now();
+            if (now - lastSpawnTime > spawnInterval && enemies.length < 8) {
+                spawnEnemy();
+                lastSpawnTime = now;
+            }
+
+            // Increase difficulty over time
+            if (score > wave * 200) {
+                wave++;
+                spawnInterval = Math.max(1000, ENEMY_SPAWN_RATE - wave * 150);
+                updateUI();
+            }
+
+            // Check for locked enemy still existing
+            if (lockedEnemy && !enemies.includes(lockedEnemy)) {
+                lockedEnemy = null;
+                typedLetters = '';
+                updateCurrentWordDisplay();
+            }
+
+            // Check game over
+            checkGameOver();
+        }
+
+        function draw() {
+            // Clear canvas with space background
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // Draw stars
+            drawStars();
+
+            // Draw grid lines for depth effect
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < CANVAS_WIDTH; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, CANVAS_HEIGHT);
+                ctx.stroke();
+            }
+            for (let i = 0; i < CANVAS_HEIGHT; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(CANVAS_WIDTH, i);
+                ctx.stroke();
+            }
+
+            // Draw bullets
+            for (const bullet of bullets) {
+                bullet.draw();
+            }
+
+            // Draw enemies
+            for (const enemy of enemies) {
+                enemy.draw();
+            }
+
+            // Draw particles
+            for (const particle of particles) {
+                particle.draw();
+            }
+
+            // Draw player
+            if (gameState === 'playing') {
+                drawPlayer();
+            }
+
+            // Draw targeting line to locked enemy
+            if (lockedEnemy) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 51, 102, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 10]);
+                ctx.beginPath();
+                ctx.moveTo(player.x, player.y - player.height / 2);
+                ctx.lineTo(lockedEnemy.x, lockedEnemy.y + lockedEnemy.height);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+
+        document.addEventListener('keydown', (e) => {
+            // Prevent default for letter keys to avoid scrolling etc.
+            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+                e.preventDefault();
+                handleKeyPress(e.key);
+            }
+        });
+
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('restartBtn').addEventListener('click', startGame);
+
+        // Allow pressing Enter to use Ironman's Snap or start/restart game
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (gameState === 'playing') {
+                    useIronmansSnap();
+                } else {
+                    startGame();
+                }
+            } else if (e.key === ' ' && gameState !== 'playing') {
+                e.preventDefault();
+                startGame();
+            }
+        });
+
+        // ==================== INITIALIZATION ====================
+
+        createStars();
+        gameLoop();
+    </script>
+</body>
+
+</html>

@@ -317,8 +317,10 @@
             PLAYER_Y = CANVAS_HEIGHT - 60;
 
             // Update player position if game is running
-            player.x = CANVAS_WIDTH / 2;
-            player.y = PLAYER_Y;
+            if (typeof player !== 'undefined') {
+                player.x = CANVAS_WIDTH / 2;
+                player.y = PLAYER_Y;
+            }
         }
 
         // Initial resize

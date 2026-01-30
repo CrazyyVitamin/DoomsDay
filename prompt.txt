@@ -1,0 +1,27 @@
+Context:I want to build a web-based typing shooter game similar to ZTy.pe rename it "Type Check".
+Tech Stack:
+ • Language: HTML5, CSS3, and Vanilla JavaScript (ES6+).
+ • Rendering: HTML5 Canvas API (Context 2D).
+ • No external game frameworks (keep it lightweight and dependency-free).
+Game Mechanics:
+ 1. Player: A stationary ship at the bottom center of the screen.
+ 2. Enemies: Ships that spawn at the top of the screen and slowly move down toward the player.
+ 3. Words: Each enemy has a random word assigned to it, displayed above the enemy ship.
+ 4. Targeting System:
+ ◦ The player cannot manually aim.
+ ◦ When the player types a letter, the game checks if that letter matches the start of any active enemy's word.
+ ◦ Lock-on: Once a letter is typed that matches an enemy, that enemy becomes the "Locked Target".
+ ◦ The player must finish typing the current word to destroy the locked enemy.
+ ◦ Other enemies cannot be targeted until the locked enemy is destroyed or the word is completed.
+ 5. Shooting:
+ ◦ Every correct keystroke fires a plasma bullet from the player ship to the locked enemy.
+ ◦ Completing the word destroys the enemy with a particle explosion effect.
+ 6. Game Over: If an enemy touches the player ship, the game ends.
+Visual Style:
+ • Background: Dark space theme.
+ • Style: Wireframe or Neon aesthetic (green/red colors).
+ • Smooth animations (60fps game loop using requestAnimationFrame).
+Task:Write the complete, single-file HTML/JS code (index.html) to play this game. Include the word list array, the game loop, class structures for Enemy, Bullet, and Particle, and the event listener for keystrokes.
+ 
+Key Implementation Details to Look For
+ensure it handles the "Lock-on" logic correctly. The code must prevent the player from typing the first letter of another word while they are already halfway through typing the current word.

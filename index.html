@@ -271,10 +271,10 @@
             'magnificent', 'incredible', 'invincible', 'unstoppable', 'phenomenal', 'extraordinary'
         ];
 
-        // Game Constants
-        const CANVAS_WIDTH = 900;
-        const CANVAS_HEIGHT = 700;
-        const PLAYER_Y = CANVAS_HEIGHT - 60;
+        // Game Constants - Now Dynamic
+        let CANVAS_WIDTH = 400;
+        let CANVAS_HEIGHT = 640;
+        let PLAYER_Y = CANVAS_HEIGHT - 60;
         const ENEMY_SPAWN_RATE = 2500; // ms between spawns
         const ENEMY_SPEED_BASE = 0.4;
         const BULLET_SPEED = 12;
@@ -282,6 +282,57 @@
         // Canvas Setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+
+        // Responsive Canvas Function
+        function resizeCanvas() {
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+
+            // Calculate 10:16 aspect ratio (vertical but not too narrow)
+            const aspectRatio = 10 / 16;
+            let canvasWidth, canvasHeight;
+
+            // Portrait mode (mobile default)
+            if (containerWidth / containerHeight < aspectRatio) {
+                // Width constrained
+                canvasWidth = Math.min(containerWidth * 0.98, 600);
+                canvasHeight = canvasWidth / aspectRatio;
+            } else {
+                // Height constrained
+                canvasHeight = Math.min(containerHeight * 0.95, 960);
+                canvasWidth = canvasHeight * aspectRatio;
+            }
+
+            // Ensure minimum readable size
+            canvasWidth = Math.max(canvasWidth, 320);
+            canvasHeight = canvasWidth / aspectRatio;
+
+            // Set canvas dimensions
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            // Update game constants
+            CANVAS_WIDTH = canvasWidth;
+            CANVAS_HEIGHT = canvasHeight;
+            PLAYER_Y = CANVAS_HEIGHT - 60;
+
+            // Update player position if game is running
+            player.x = CANVAS_WIDTH / 2;
+            player.y = PLAYER_Y;
+        }
+
+        // Initial resize
+        resizeCanvas();
+
+        // Resize on window change
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+        });
+
+        // Prevent zoom on mobile
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('gesturechange', (e) => e.preventDefault());
+        document.addEventListener('gestureend', (e) => e.preventDefault());
 
         // Game State
         let gameState = 'start'; // 'start', 'playing', 'gameOver'

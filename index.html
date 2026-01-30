@@ -243,12 +243,28 @@
         // Word List - Varied difficulty and themes
         const WORD_LIST = [
             // Easy words (3-4 letters)
-            'hero', 'save', 'time', 'doom', 'fate', 'soul', 'dark', 'fire', 'moon', 'star',
-            'wild', 'free', 'bold', 'fast', 'calm', 'hope', 'fear', 'mind', 'path', 'wind',
+            'zen', 'gold', 'us', 'map', 'kind', 'echo', 'xi', 'joy', 'dusk', 'art', 'flow', 'oil',
+            'wise', 'ash', 'job', 'ox', 'calm', 'sky', 'seed', 'fit', 'warm', 'web', 'age', 'yo',
+            'fate', 'soul', 'try', 'gas', 'peak', 'hope', 'mud', 'plan', 'air', 'bold', 'loss',
+            'root', 'id', 'run', 'fast', 'mind', 'tea', 'nu', 'dawn', 'pure', 'ice', 'rise', 'path',
+            'blue', 'gain', 'song', 'war', 'la', 'man', 'wild', 'few', 'care', 'fly', 'day', 'ax',
+            'soft', 'one', 'wish', 'goal', 'ad', 'time', 'pi', 'grow', 'fear', 'cool', 'law', 'word',
+            'ink', 'true', 'ha', 'eve', 'two', 'deal', 'help', 'red', 'slow', 'free', 'am', 'key', 'kid',
+            'sun', 'heal', 'fair', 'no', 'if', 'deep', 'pay', 'my', 'life', 'cup', 'old', 'bond', 'way',
+            'new', 'safe', 'tax', 'or', 'now', 'qi', 'hard', 'real', 'uh', 'pen', 'aim', 'oh', 'ma', 'fall',
+            'sea', 'win', 'ego', 'bi', 'love', 'pa', 'all', 'ex', 'god', 'is', 'be', 'we', 'me', 'it', 'go',
+            'do', 'up', 'on', 'in', 'by', 'so', 'he', 'she', 'hi', 'ok', 'to', 'at', 'as', 'an', 're', 'ta',
             // Medium words (5-6 letters)
-            'brave', 'chaos', 'dream', 'force', 'magic', 'storm', 'thunder', 'wonder', 'mystic',
-            'cosmic', 'eternal', 'fierce', 'noble', 'quest', 'power', 'realm', 'valor', 'spirit',
-            'dragon', 'knight', 'destiny', 'justice', 'freedom', 'victory', 'legacy', 'odyssey',
+            'future', 'touch', 'balance', 'silver', 'choice', 'signal', 'skill', 'truth', 'growth', 'object',
+            'heart', 'focus', 'ground', 'sweet', 'design', 'image', 'friend', 'moment', 'value', 'health',
+            'quiet', 'mirror', 'method', 'faith', 'danger', 'motion', 'shape', 'respect', 'urban', 'voice',
+            'light', 'order', 'memory', 'aware', 'chance', 'result', 'sound', 'energy', 'people', 'shadow',
+            'swift', 'water', 'wealth', 'phase', 'wisdom', 'nature', 'trust', 'source', 'reason', 'vision',
+            'stone', 'impact', 'listen', 'belief', 'golden', 'detail', 'purpose', 'system', 'sight', 'plant',
+            'spirit', 'action', 'honest', 'flame', 'change', 'noble', 'reward', 'border', 'beauty', 'safety',
+            'power', 'create', 'sense', 'level', 'talent', 'smile', 'rural', 'solid', 'sharp', 'clean',
+            'fresh', 'happy', 'calm', 'lucky', 'smart', 'bound', 'vivid', 'honor', 'pride', 'equal',
+            'thread', 'effect',
             // Hard words (7+ letters)
             'adventure', 'champion', 'guardian', 'infinite', 'legendary', 'universe', 'warrior',
             'destroyer', 'avenger', 'defender', 'conqueror', 'visionary', 'immortal', 'spectacular',
@@ -332,7 +348,7 @@
                 }
 
                 // Enemy ship body (wireframe triangle)
-                ctx.strokeStyle = this === lockedEnemy ? '#ff3366' : '#00ff88';
+                ctx.strokeStyle = this === lockedEnemy ? '#ff1493' : '#9d4edd';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(this.x, this.y + this.height);
@@ -350,7 +366,7 @@
                 ctx.stroke();
 
                 // Engine glow
-                ctx.fillStyle = this === lockedEnemy ? 'rgba(255, 51, 102, 0.6)' : 'rgba(0, 255, 136, 0.6)';
+                ctx.fillStyle = this === lockedEnemy ? 'rgba(255, 20, 147, 0.7)' : 'rgba(157, 78, 221, 0.7)';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y - 5, 4, 0, Math.PI * 2);
                 ctx.fill();
@@ -387,8 +403,8 @@
                         ctx.shadowBlur = 5;
                     } else {
                         // Untyped letters on non-locked enemies
-                        ctx.fillStyle = '#00ff88';
-                        ctx.shadowColor = '#00ff88';
+                        ctx.fillStyle = '#c77dff';
+                        ctx.shadowColor = '#c77dff';
                         ctx.shadowBlur = 8;
                     }
 
@@ -449,7 +465,7 @@
                 for (let i = 0; i < this.trail.length; i++) {
                     const alpha = i / this.trail.length;
                     const size = 2 + alpha * 3;
-                    ctx.fillStyle = `rgba(0, 255, 136, ${alpha * 0.5})`;
+                    ctx.fillStyle = `rgba(0, 217, 255, ${alpha * 0.6})`;
                     ctx.beginPath();
                     ctx.arc(this.trail[i].x, this.trail[i].y, size, 0, Math.PI * 2);
                     ctx.fill();
@@ -457,9 +473,9 @@
 
                 // Draw bullet
                 ctx.save();
-                ctx.shadowColor = '#00ff88';
-                ctx.shadowBlur = 15;
-                ctx.fillStyle = '#00ff88';
+                ctx.shadowColor = '#00d9ff';
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = '#00d9ff';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
                 ctx.fill();
@@ -554,11 +570,11 @@
 
         function drawPlayer() {
             ctx.save();
-            ctx.shadowColor = '#00ff88';
-            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00d9ff';
+            ctx.shadowBlur = 25;
 
             // Main body (wireframe)
-            ctx.strokeStyle = '#00ff88';
+            ctx.strokeStyle = '#00d9ff';
             ctx.lineWidth = 2;
 
             // Ship hull
@@ -580,7 +596,7 @@
             ctx.stroke();
 
             // Engine glow
-            ctx.fillStyle = 'rgba(0, 255, 136, 0.8)';
+            ctx.fillStyle = 'rgba(0, 217, 255, 0.9)';
             ctx.beginPath();
             ctx.ellipse(player.x, player.y + player.height / 2 + 5, 8, 4, 0, 0, Math.PI * 2);
             ctx.fill();
@@ -597,12 +613,52 @@
                 availableWords = WORD_LIST;
             }
 
+            // Difficulty-based word selection
+            // Early waves: prefer easy words, Later waves: more medium/hard words
+            let candidateWords = availableWords;
+            if (wave <= 3) {
+                // Waves 1-3: 80% easy, 20% medium
+                const easyWords = availableWords.filter(w => w.length <= 4);
+                const mediumWords = availableWords.filter(w => w.length >= 5 && w.length <= 6);
+                if (Math.random() < 0.8 && easyWords.length > 0) {
+                    candidateWords = easyWords;
+                } else if (mediumWords.length > 0) {
+                    candidateWords = mediumWords;
+                }
+            } else if (wave <= 6) {
+                // Waves 4-6: 50% easy, 40% medium, 10% hard
+                const rand = Math.random();
+                const easyWords = availableWords.filter(w => w.length <= 4);
+                const mediumWords = availableWords.filter(w => w.length >= 5 && w.length <= 6);
+                const hardWords = availableWords.filter(w => w.length >= 7);
+                if (rand < 0.5 && easyWords.length > 0) {
+                    candidateWords = easyWords;
+                } else if (rand < 0.9 && mediumWords.length > 0) {
+                    candidateWords = mediumWords;
+                } else if (hardWords.length > 0) {
+                    candidateWords = hardWords;
+                }
+            } else {
+                // Wave 7+: 30% easy, 40% medium, 30% hard
+                const rand = Math.random();
+                const easyWords = availableWords.filter(w => w.length <= 4);
+                const mediumWords = availableWords.filter(w => w.length >= 5 && w.length <= 6);
+                const hardWords = availableWords.filter(w => w.length >= 7);
+                if (rand < 0.3 && easyWords.length > 0) {
+                    candidateWords = easyWords;
+                } else if (rand < 0.7 && mediumWords.length > 0) {
+                    candidateWords = mediumWords;
+                } else if (hardWords.length > 0) {
+                    candidateWords = hardWords;
+                }
+            }
+
             // Prefer words that don't start with the same letter as existing enemies
             const usedFirstLetters = enemies.map(e => e.word[0].toLowerCase());
-            let preferredWords = availableWords.filter(w => !usedFirstLetters.includes(w[0].toLowerCase()));
+            let preferredWords = candidateWords.filter(w => !usedFirstLetters.includes(w[0].toLowerCase()));
 
             if (preferredWords.length === 0) {
-                preferredWords = availableWords;
+                preferredWords = candidateWords;
             }
 
             const word = preferredWords[Math.floor(Math.random() * preferredWords.length)];
@@ -862,7 +918,7 @@
                 if (lockedEnemy && bullet.checkHit(lockedEnemy)) {
                     // Bullet hit - create small particle effect
                     for (let i = 0; i < 5; i++) {
-                        particles.push(new Particle(bullet.x, bullet.y, '#00ff88'));
+                        particles.push(new Particle(bullet.x, bullet.y, '#00d9ff'));
                     }
                     bullet.alive = false;
                 }

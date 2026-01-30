@@ -62,6 +62,8 @@
             font-size: 18px;
             text-shadow: 0 0 10px #ffd700, 0 0 20px rgba(220, 20, 60, 0.5);
             z-index: 10;
+            display: none;
+            /* Hidden - now rendered on canvas */
         }
 
         #superpower {
@@ -78,6 +80,8 @@
             border-radius: 8px;
             background: rgba(220, 20, 60, 0.1);
             backdrop-filter: blur(5px);
+            display: none;
+            /* Hidden - now rendered on canvas */
         }
 
         #superpower .snap-icon {
@@ -208,9 +212,10 @@
         #gameControls {
             position: absolute;
             top: 50px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
+            left: 10px;
+            display: none;
+            /* Hidden - now rendered on canvas */
+            flex-direction: row;
             gap: 8px;
             z-index: 15;
         }
@@ -260,12 +265,14 @@
         /* Next Snap Progress */
         #snapProgress {
             position: absolute;
-            top: 80px;
+            top: 45px;
             right: 10px;
             color: #c77dff;
-            font-size: 12px;
+            font-size: 11px;
             text-shadow: 0 0 8px #c77dff;
             z-index: 10;
+            display: none;
+            /* Hidden - now rendered on canvas */
         }
 
         /* Leaderboard Modal */
@@ -720,11 +727,12 @@
         }
 
         class Bullet {
-            constructor(startX, startY, targetX, targetY) {
+            constructor(startX, startY, targetX, targetY, targetEnemy) {
                 this.x = startX;
                 this.y = startY;
                 this.targetX = targetX;
                 this.targetY = targetY;
+                this.targetEnemy = targetEnemy; // Store reference to target enemy
 
                 const dx = targetX - startX;
                 const dy = targetY - startY;
@@ -975,7 +983,8 @@
                 player.x,
                 player.y - player.height / 2,
                 targetEnemy.x,
-                targetEnemy.y + targetEnemy.height / 2
+                targetEnemy.y + targetEnemy.height / 2,
+                targetEnemy // Pass the enemy reference
             );
             bullets.push(bullet);
         }
@@ -1166,8 +1175,10 @@
             document.getElementById('finalScore').textContent = score;
             createExplosion(player.x, player.y, '#ff3366');
 
-            // Show name input if score is high enough
-            showNameInput();
+            // Show name input after a brief delay for explosion effect
+            setTimeout(() => {
+                showNameInput();
+            }, 500);
         }
 
         function startGame() {
@@ -1192,6 +1203,7 @@
 
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('nameInputModal').style.display = 'none';
             updateUI();
             updateCurrentWordDisplay();
 
@@ -1229,7 +1241,13 @@
                             score += enemy.word.length * 10;
                             wordsDestroyed++;
                             checkSnapEarned();
+
+                            // Remove this enemy
                             enemies = enemies.filter(e => e !== enemy);
+
+                            // Remove all bullets targeting this enemy
+                            bullets = bullets.filter(b => b.targetEnemy !== enemy);
+
                             updateUI();
                         }
                         break; // Bullet hit something, stop checking
@@ -1325,6 +1343,76 @@
                 ctx.stroke();
                 ctx.restore();
             }
+
+            // Draw UI elements on canvas
+            drawUI();
+        }
+
+        function drawUI() {
+            // Only draw during gameplay
+            if (gameState !== 'playing') return;
+
+            ctx.save();
+            ctx.font = '16px "Courier New", monospace';
+            ctx.textAlign = 'left';
+
+            // Score (top-left)
+            ctx.fillStyle = '#ffd700';
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 10;
+            ctx.fillText(`SCORE: ${score}`, 15, 25);
+
+            // Wave (below score)
+            ctx.fillText(`WAVE: ${wave}`, 15, 50);
+            ctx.shadowBlur = 0;
+
+            // Snap counter (top-right)
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#dc143c';
+            ctx.shadowColor = '#dc143c';
+            ctx.shadowBlur = 15;
+            ctx.fillText(`⚡ SNAP: ${snapsAvailable}`, CANVAS_WIDTH - 15, 25);
+
+            // Next snap progress (below snap counter)
+            ctx.font = '12px "Courier New", monospace';
+            ctx.fillStyle = '#c77dff';
+            ctx.shadowColor = '#c77dff';
+            ctx.shadowBlur = 8;
+            ctx.fillText(`Next: ${wordsDestroyed}/${nextSnapThreshold}`, CANVAS_WIDTH - 15, 45);
+            ctx.shadowBlur = 0;
+
+            // Control buttons (bottom-left)
+            const btnY = CANVAS_HEIGHT - 20;
+            const btnSpacing = 60;
+
+            // Pause button
+            ctx.fillStyle = gamePaused ? '#00ff88' : 'rgba(220, 20, 60, 0.3)';
+            ctx.fillRect(15, btnY - 30, 45, 35);
+            ctx.strokeStyle = '#dc143c';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(15, btnY - 30, 45, 35);
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(gamePaused ? '▶️' : '⏸️', 37.5, btnY - 7);
+
+            // Music button
+            const musicX = 15 + btnSpacing;
+            ctx.fillStyle = musicEnabled ? 'rgba(0, 255, 136, 0.2)' : 'rgba(220, 20, 60, 0.3)';
+            ctx.fillRect(musicX, btnY - 30, 45, 35);
+            ctx.strokeStyle = musicEnabled ? '#00ff88' : '#dc143c';
+            ctx.strokeRect(musicX, btnY - 30, 45, 35);
+            ctx.fillText(musicEnabled ? '🎵' : '🔇', musicX + 22.5, btnY - 7);
+
+            // SFX button
+            const sfxX = 15 + btnSpacing * 2;
+            ctx.fillStyle = sfxEnabled ? 'rgba(0, 255, 136, 0.2)' : 'rgba(220, 20, 60, 0.3)';
+            ctx.fillRect(sfxX, btnY - 30, 45, 35);
+            ctx.strokeStyle = sfxEnabled ? '#00ff88' : '#dc143c';
+            ctx.strokeRect(sfxX, btnY - 30, 45, 35);
+            ctx.fillText(sfxEnabled ? '🔊' : '🔈', sfxX + 22.5, btnY - 7);
+
+            ctx.restore();
         }
 
         function gameLoop() {
@@ -1433,8 +1521,12 @@
         // ==================== EVENT LISTENERS ====================
 
         document.addEventListener('keydown', (e) => {
-            // Prevent default for letter keys to avoid scrolling etc.
-            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/) && !gamePaused) {
+            // Only handle game keys if name input modal is not showing
+            const nameInputModal = document.getElementById('nameInputModal');
+            const isNameInputVisible = nameInputModal.style.display === 'block';
+
+            // Prevent default for letter keys to avoid scrolling etc. (but not when typing name)
+            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/) && !gamePaused && !isNameInputVisible) {
                 e.preventDefault();
                 handleKeyPress(e.key);
             }
@@ -1443,7 +1535,34 @@
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', startGame);
 
-        // Pause/Resume controls
+        // Canvas click handler for UI buttons
+        canvas.addEventListener('click', (e) => {
+            if (gameState !== 'playing') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const btnY = CANVAS_HEIGHT - 20;
+            const btnSpacing = 60;
+
+            // Check pause button (15, btnY-30, 45x35)
+            if (x >= 15 && x <= 60 && y >= btnY - 30 && y <= btnY + 5) {
+                togglePause();
+            }
+            // Check music button
+            else if (x >= 15 + btnSpacing && x <= 60 + btnSpacing && y >= btnY - 30 && y <= btnY + 5) {
+                toggleMusic();
+            }
+            // Check SFX button
+            else if (x >= 15 + btnSpacing * 2 && x <= 60 + btnSpacing * 2 && y >= btnY - 30 && y <= btnY + 5) {
+                toggleSfx();
+            }
+        });
+
+        // Pause/Resume controls (keep for backward compatibility but buttons are now on canvas)
         document.getElementById('pauseBtn').addEventListener('click', togglePause);
         document.getElementById('musicBtn').addEventListener('click', toggleMusic);
         document.getElementById('sfxBtn').addEventListener('click', toggleSfx);
@@ -1473,7 +1592,7 @@
             } else if (e.key === ' ' && gameState !== 'playing') {
                 e.preventDefault();
                 startGame();
-            } else if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && gameState === 'playing') {
+            } else if (e.key === 'Escape' && gameState === 'playing') {
                 e.preventDefault();
                 togglePause();
             }

@@ -203,6 +203,212 @@
             color: #ffd700;
             box-shadow: 0 0 40px rgba(220, 20, 60, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
         }
+
+        /* Game Controls */
+        #gameControls {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 15;
+        }
+
+        .control-btn {
+            background: rgba(220, 20, 60, 0.2);
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #ffd700;
+        }
+
+        .control-btn:hover {
+            background: rgba(220, 20, 60, 0.4);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+        }
+
+        .control-btn.active {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+        }
+
+        /* Pause Overlay */
+        #pauseOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        #pauseOverlay h2 {
+            color: #ffd700;
+            font-size: 48px;
+            text-shadow: 0 0 30px #ffd700;
+        }
+
+        /* Next Snap Progress */
+        #snapProgress {
+            position: absolute;
+            top: 80px;
+            right: 10px;
+            color: #c77dff;
+            font-size: 12px;
+            text-shadow: 0 0 8px #c77dff;
+            z-index: 10;
+        }
+
+        /* Leaderboard Modal */
+        #leaderboardModal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 0, 30, 0.98) 0%, rgba(26, 10, 46, 0.98) 100%);
+            border: 3px solid #dc143c;
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 30;
+            display: none;
+            min-width: 280px;
+            max-width: 90%;
+            box-shadow: 0 0 50px rgba(220, 20, 60, 0.5);
+        }
+
+        #leaderboardModal h2 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ffd700;
+            font-size: 24px;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+            color: #c77dff;
+            font-size: 14px;
+        }
+
+        .leaderboard-entry:nth-child(1) {
+            color: #ffd700;
+        }
+
+        .leaderboard-entry:nth-child(2) {
+            color: #c0c0c0;
+        }
+
+        .leaderboard-entry:nth-child(3) {
+            color: #cd7f32;
+        }
+
+        .leaderboard-entry .rank {
+            width: 30px;
+        }
+
+        .leaderboard-entry .name {
+            flex: 1;
+        }
+
+        .leaderboard-entry .score {
+            width: 80px;
+            text-align: right;
+        }
+
+        #closeLeaderboard,
+        #viewLeaderboardBtn {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 10px 25px;
+            margin-top: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        #closeLeaderboard:hover,
+        #viewLeaderboardBtn:hover {
+            background: #dc143c;
+            color: #ffd700;
+        }
+
+        /* Name Input Modal */
+        #nameInputModal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 0, 30, 0.98) 0%, rgba(26, 10, 46, 0.98) 100%);
+            border: 3px solid #ffd700;
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 35;
+            display: none;
+            text-align: center;
+            min-width: 280px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+
+        #nameInputModal h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px #ffd700;
+        }
+
+        #nameInputModal p {
+            color: #c77dff;
+            margin-bottom: 15px;
+        }
+
+        #playerNameInput {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #dc143c;
+            color: #ffd700;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 8px;
+            width: calc(100% - 30px);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #playerNameInput:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        #saveScoreBtn {
+            background: #dc143c;
+            border: none;
+            color: #ffd700;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #saveScoreBtn:hover {
+            background: #ff1744;
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
+        }
     </style>
 </head>
 
@@ -216,7 +422,19 @@
         </div>
 
         <div id="superpower">
-            <span class="snap-icon">⚡</span> IRONMAN'S SNAP: <span id="snapCount">0</span>
+            <span class="snap-icon">⚡</span> SNAP: <span id="snapCount">0</span>
+        </div>
+
+        <div id="snapProgress">Next: 0/25</div>
+
+        <div id="gameControls">
+            <button class="control-btn" id="pauseBtn" title="Pause (P)">⏸️</button>
+            <button class="control-btn active" id="musicBtn" title="Music">🎵</button>
+            <button class="control-btn active" id="sfxBtn" title="Sound Effects">🔊</button>
+        </div>
+
+        <div id="pauseOverlay">
+            <h2>⏸️ PAUSED</h2>
         </div>
 
         <div id="currentWord"></div>
@@ -227,15 +445,29 @@
                 The universe is under attack!<br>
                 Type words to destroy enemies.<br>
                 Use Ironman's Snap (Enter) to clear all threats!<br>
-                <em style="font-size: 14px; opacity: 0.7;">Earn 1 snap every 50 words destroyed</em>
+                <em style="font-size: 14px; opacity: 0.7;">First snap at 25 words, then +5 more each time</em>
             </p>
             <button id="startBtn">SAVE THE UNIVERSE</button>
+            <button id="viewLeaderboardBtn" style="margin-top: 10px;">🏆 LEADERBOARD</button>
         </div>
 
         <div id="gameOver">
             <h1>GAME OVER</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
             <button id="restartBtn">PLAY AGAIN</button>
+        </div>
+
+        <div id="leaderboardModal">
+            <h2>🏆 LEADERBOARD</h2>
+            <div id="leaderboardList"></div>
+            <button id="closeLeaderboard">CLOSE</button>
+        </div>
+
+        <div id="nameInputModal">
+            <h2>🎉 NEW HIGH SCORE!</h2>
+            <p>Enter your name:</p>
+            <input type="text" id="playerNameInput" maxlength="15" placeholder="Your Name">
+            <button id="saveScoreBtn">SAVE SCORE</button>
         </div>
     </div>
 
@@ -323,6 +555,39 @@
             }
         }
 
+
+        // Game State
+        let gameState = 'start'; // 'start', 'playing', 'gameOver', 'paused'
+        let gamePaused = false;
+        let score = 0;
+        let wave = 1;
+        let enemies = [];
+        let bullets = [];
+        let particles = [];
+        let stars = [];
+        let lockedEnemy = null;
+        let typedLetters = '';
+        let lastSpawnTime = 0;
+        let spawnInterval = ENEMY_SPAWN_RATE;
+
+        // Audio Settings (placeholders for future audio implementation)
+        let musicEnabled = true;
+        let sfxEnabled = true;
+
+        // Ironman's Snap Superpower - Progressive System
+        let wordsDestroyed = 0;
+        let snapsAvailable = 0;
+        let snapsEarned = 0;
+        let nextSnapThreshold = 25; // First snap at 25 words
+
+        // Player Object (must be created before resizeCanvas is called)
+        const player = {
+            x: CANVAS_WIDTH / 2,
+            y: PLAYER_Y,
+            width: 50,
+            height: 40
+        };
+
         // Initial resize
         resizeCanvas();
 
@@ -335,31 +600,6 @@
         document.addEventListener('gesturestart', (e) => e.preventDefault());
         document.addEventListener('gesturechange', (e) => e.preventDefault());
         document.addEventListener('gestureend', (e) => e.preventDefault());
-
-        // Game State
-        let gameState = 'start'; // 'start', 'playing', 'gameOver'
-        let score = 0;
-        let wave = 1;
-        let enemies = [];
-        let bullets = [];
-        let particles = [];
-        let stars = [];
-        let lockedEnemy = null;
-        let typedLetters = '';
-        let lastSpawnTime = 0;
-        let spawnInterval = ENEMY_SPAWN_RATE;
-
-        // Ironman's Snap Superpower
-        let wordsDestroyed = 0;
-        let snapsAvailable = 0;
-
-        // Player Object
-        const player = {
-            x: CANVAS_WIDTH / 2,
-            y: PLAYER_Y,
-            width: 50,
-            height: 40
-        };
 
         // ==================== CLASSES ====================
 
@@ -759,23 +999,11 @@
 
                     // Check if word is complete
                     if (lockedEnemy.typedIndex >= lockedEnemy.word.length) {
-                        // Destroy enemy
-                        createExplosion(lockedEnemy.x, lockedEnemy.y + lockedEnemy.height / 2, '#ff3366');
-                        score += lockedEnemy.word.length * 10;
-                        wordsDestroyed++;
-
-                        // Check if player earned a snap
-                        if (wordsDestroyed % 50 === 0) {
-                            snapsAvailable++;
-                            updateSnapUI();
-                            // Flash effect when snap earned
-                            createSnapEarnedEffect();
-                        }
-
-                        enemies = enemies.filter(e => e !== lockedEnemy);
+                        // Mark enemy as word complete - don't destroy yet
+                        // The last bullet will trigger destruction when it hits
+                        lockedEnemy.wordComplete = true;
                         lockedEnemy = null;
                         typedLetters = '';
-                        updateUI();
                     }
 
                     updateCurrentWordDisplay();
@@ -795,21 +1023,10 @@
 
                         // Check if single-letter word (edge case)
                         if (lockedEnemy.typedIndex >= lockedEnemy.word.length) {
-                            createExplosion(lockedEnemy.x, lockedEnemy.y + lockedEnemy.height / 2, '#ff3366');
-                            score += lockedEnemy.word.length * 10;
-                            wordsDestroyed++;
-
-                            // Check if player earned a snap
-                            if (wordsDestroyed % 50 === 0) {
-                                snapsAvailable++;
-                                updateSnapUI();
-                                createSnapEarnedEffect();
-                            }
-
-                            enemies = enemies.filter(e => e !== lockedEnemy);
+                            // Mark enemy as word complete - bullet will destroy it
+                            lockedEnemy.wordComplete = true;
                             lockedEnemy = null;
                             typedLetters = '';
-                            updateUI();
                         }
 
                         updateCurrentWordDisplay();
@@ -844,6 +1061,25 @@
 
         function updateSnapUI() {
             document.getElementById('snapCount').textContent = snapsAvailable;
+            // Update progress to next snap
+            const progressElement = document.getElementById('snapProgress');
+            if (progressElement) {
+                progressElement.textContent = `Next: ${wordsDestroyed}/${nextSnapThreshold}`;
+            }
+        }
+
+        function checkSnapEarned() {
+            // Progressive snap system: first at 25, then +5 each time
+            if (wordsDestroyed >= nextSnapThreshold) {
+                snapsAvailable++;
+                snapsEarned++;
+                // Next threshold is 25 more + 5 for each snap earned
+                nextSnapThreshold = wordsDestroyed + 25 + (snapsEarned * 5);
+                updateSnapUI();
+                createSnapEarnedEffect();
+            } else {
+                updateSnapUI(); // Just update progress display
+            }
         }
 
         function createSnapEarnedEffect() {
@@ -926,13 +1162,17 @@
 
         function gameOver() {
             gameState = 'gameOver';
+            gamePaused = false;
             document.getElementById('finalScore').textContent = score;
-            document.getElementById('gameOver').style.display = 'block';
             createExplosion(player.x, player.y, '#ff3366');
+
+            // Show name input if score is high enough
+            showNameInput();
         }
 
         function startGame() {
             gameState = 'playing';
+            gamePaused = false;
             score = 0;
             wave = 1;
             enemies = [];
@@ -942,6 +1182,13 @@
             typedLetters = '';
             lastSpawnTime = Date.now();
             spawnInterval = ENEMY_SPAWN_RATE;
+
+            // Reset superpower (progressive system)
+            wordsDestroyed = 0;
+            snapsAvailable = 0;
+            snapsEarned = 0;
+            nextSnapThreshold = 25;
+            updateSnapUI();
 
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('gameOver').style.display = 'none';
@@ -953,7 +1200,7 @@
         }
 
         function update() {
-            if (gameState !== 'playing') return;
+            if (gameState !== 'playing' || gamePaused) return;
 
             // Update stars
             updateStars();
@@ -967,13 +1214,26 @@
             for (const bullet of bullets) {
                 bullet.update();
 
-                // Check bullet collisions with locked enemy
-                if (lockedEnemy && bullet.checkHit(lockedEnemy)) {
-                    // Bullet hit - create small particle effect
-                    for (let i = 0; i < 5; i++) {
-                        particles.push(new Particle(bullet.x, bullet.y, '#00d9ff'));
+                // Check bullet collisions with ALL enemies
+                for (const enemy of enemies) {
+                    if (bullet.checkHit(enemy)) {
+                        // Bullet hit - create particle effect
+                        for (let i = 0; i < 5; i++) {
+                            particles.push(new Particle(bullet.x, bullet.y, '#00d9ff'));
+                        }
+                        bullet.alive = false;
+
+                        // If this enemy has word complete, destroy it now!
+                        if (enemy.wordComplete) {
+                            createExplosion(enemy.x, enemy.y + enemy.height / 2, '#ff3366');
+                            score += enemy.word.length * 10;
+                            wordsDestroyed++;
+                            checkSnapEarned();
+                            enemies = enemies.filter(e => e !== enemy);
+                            updateUI();
+                        }
+                        break; // Bullet hit something, stop checking
                     }
-                    bullet.alive = false;
                 }
             }
             bullets = bullets.filter(b => b.alive);
@@ -1073,11 +1333,108 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // ==================== PAUSE SYSTEM ====================
+
+        function togglePause() {
+            if (gameState !== 'playing' && gameState !== 'paused') return;
+
+            gamePaused = !gamePaused;
+            const pauseBtn = document.getElementById('pauseBtn');
+            const pauseOverlay = document.getElementById('pauseOverlay');
+
+            if (gamePaused) {
+                pauseBtn.textContent = '▶️';
+                pauseOverlay.style.display = 'flex';
+            } else {
+                pauseBtn.textContent = '⏸️';
+                pauseOverlay.style.display = 'none';
+            }
+        }
+
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            const btn = document.getElementById('musicBtn');
+            btn.classList.toggle('active', musicEnabled);
+            btn.textContent = musicEnabled ? '🎵' : '🔇';
+            // Audio implementation placeholder - add actual audio control here
+        }
+
+        function toggleSfx() {
+            sfxEnabled = !sfxEnabled;
+            const btn = document.getElementById('sfxBtn');
+            btn.classList.toggle('active', sfxEnabled);
+            btn.textContent = sfxEnabled ? '🔊' : '🔈';
+            // Audio implementation placeholder - add actual audio control here
+        }
+
+        // ==================== LEADERBOARD SYSTEM ====================
+
+        function getLeaderboard() {
+            const data = localStorage.getItem('doomsday_leaderboard');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveToLeaderboard(name, playerScore, playerWave, playerWords) {
+            const leaderboard = getLeaderboard();
+            leaderboard.push({
+                name: name || 'HERO',
+                score: playerScore,
+                wave: playerWave,
+                wordsDestroyed: playerWords,
+                timestamp: Date.now()
+            });
+            // Sort by score descending, keep top 10
+            leaderboard.sort((a, b) => b.score - a.score);
+            const top10 = leaderboard.slice(0, 10);
+            localStorage.setItem('doomsday_leaderboard', JSON.stringify(top10));
+        }
+
+        function showLeaderboard() {
+            const leaderboard = getLeaderboard();
+            const listEl = document.getElementById('leaderboardList');
+
+            if (leaderboard.length === 0) {
+                listEl.innerHTML = '<div style="color: #c77dff; text-align: center; padding: 20px;">No scores yet! Be the first hero!</div>';
+            } else {
+                listEl.innerHTML = leaderboard.map((entry, i) => `
+                    <div class="leaderboard-entry">
+                        <span class="rank">#${i + 1}</span>
+                        <span class="name">${entry.name}</span>
+                        <span class="score">${entry.score}</span>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('leaderboardModal').style.display = 'block';
+        }
+
+        function hideLeaderboard() {
+            document.getElementById('leaderboardModal').style.display = 'none';
+        }
+
+        function showNameInput() {
+            document.getElementById('nameInputModal').style.display = 'block';
+            document.getElementById('playerNameInput').focus();
+        }
+
+        function hideNameInput() {
+            document.getElementById('nameInputModal').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
+        function savePlayerScore() {
+            const nameInput = document.getElementById('playerNameInput');
+            const playerName = nameInput.value.trim() || 'HERO';
+            saveToLeaderboard(playerName, score, wave, wordsDestroyed);
+            nameInput.value = '';
+            hideNameInput();
+        }
+
         // ==================== EVENT LISTENERS ====================
 
         document.addEventListener('keydown', (e) => {
             // Prevent default for letter keys to avoid scrolling etc.
-            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/) && !gamePaused) {
                 e.preventDefault();
                 handleKeyPress(e.key);
             }
@@ -1086,18 +1443,39 @@
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', startGame);
 
-        // Allow pressing Enter to use Ironman's Snap or start/restart game
+        // Pause/Resume controls
+        document.getElementById('pauseBtn').addEventListener('click', togglePause);
+        document.getElementById('musicBtn').addEventListener('click', toggleMusic);
+        document.getElementById('sfxBtn').addEventListener('click', toggleSfx);
+
+        // Leaderboard controls
+        document.getElementById('viewLeaderboardBtn').addEventListener('click', showLeaderboard);
+        document.getElementById('closeLeaderboard').addEventListener('click', hideLeaderboard);
+        document.getElementById('saveScoreBtn').addEventListener('click', savePlayerScore);
+
+        // Enter key on name input
+        document.getElementById('playerNameInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                savePlayerScore();
+            }
+        });
+
+        // Allow pressing Enter to use Ironman's Snap, P to pause, or start/restart game
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                if (gameState === 'playing') {
+                if (gameState === 'playing' && !gamePaused) {
                     useIronmansSnap();
-                } else {
+                } else if (gameState !== 'playing' && gameState !== 'gameOver') {
                     startGame();
                 }
             } else if (e.key === ' ' && gameState !== 'playing') {
                 e.preventDefault();
                 startGame();
+            } else if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && gameState === 'playing') {
+                e.preventDefault();
+                togglePause();
             }
         });
 

@@ -140,6 +140,12 @@
             border-color: #00ff88;
         }
 
+        /* Hide side panels - UI is now inside canvas */
+        #leftPanel,
+        #rightPanel {
+            display: none !important;
+        }
+
         #gameCanvas {
             border: 3px solid #dc143c;
             box-shadow: 0 0 40px rgba(220, 20, 60, 0.5),
@@ -220,12 +226,7 @@
 
             #leftPanel,
             #rightPanel {
-                flex-direction: row;
-                justify-content: space-around;
-                align-items: center;
-                min-width: unset;
-                padding: 5px;
-                gap: 10px;
+                display: none !important;
             }
 
             .panel-stat {
@@ -257,12 +258,16 @@
 
             #mobileKeyboard {
                 display: flex !important;
-                flex: 0 0 30%;
-                max-height: 30vh;
-                order: 3;
-                overflow-y: auto;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 30vh;
+                z-index: 1000;
+                background: rgba(10, 0, 30, 0.95);
                 padding: 5px;
                 gap: 3px;
+                overflow-y: auto;
             }
 
             .key-btn {
@@ -789,7 +794,7 @@
         // Game Constants - Now Dynamic
         let CANVAS_WIDTH = 400;
         let CANVAS_HEIGHT = 640;
-        let PLAYER_Y = CANVAS_HEIGHT - 60;
+        let PLAYER_Y = CANVAS_HEIGHT - 30; // Moved lower to utilize space
         const ENEMY_SPAWN_RATE = 2500; // ms between spawns
         const ENEMY_SPEED_BASE = 0.4;
         const BULLET_SPEED = 12;
@@ -1567,6 +1572,85 @@
                 ctx.stroke();
                 ctx.restore();
             }
+
+            // Draw UI elements inside canvas
+            drawCanvasUI();
+        }
+
+        function drawCanvasUI() {
+            ctx.save();
+
+            // Top-left: Score and Wave
+            ctx.fillStyle = 'rgba(220, 20, 60, 0.8)';
+            ctx.fillRect(5, 5, 80, 50);
+            ctx.strokeStyle = '#dc143c';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(5, 5, 80, 50);
+
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('SCORE', 45, 20);
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText(score, 45, 37);
+
+            ctx.font = 'bold 10px Courier New';
+            ctx.fillText('WAVE ' + wave, 45, 50);
+
+            // Top-right: Snap info
+            ctx.fillStyle = 'rgba(220, 20, 60, 0.8)';
+            ctx.fillRect(CANVAS_WIDTH - 85, 5, 80, 50);
+            ctx.strokeStyle = '#dc143c';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(CANVAS_WIDTH - 85, 5, 80, 50);
+
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 10px Courier New';
+            ctx.fillText('⚡ SNAP', CANVAS_WIDTH - 45, 20);
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText(snapsAvailable, CANVAS_WIDTH - 45, 37);
+
+            ctx.font = 'bold 8px Courier New';
+            ctx.fillText('Next: ' + wordsDestroyed + '/' + nextSnapThreshold, CANVAS_WIDTH - 45, 50);
+
+            // Control buttons (top-center)
+            const buttonY = 10;
+            const buttonSize = 25;
+            const buttonSpacing = 30;
+            const startX = CANVAS_WIDTH / 2 - buttonSpacing;
+
+            // Pause button
+            ctx.fillStyle = gamePaused ? 'rgba(0, 255, 136, 0.8)' : 'rgba(100, 100, 255, 0.8)';
+            ctx.fillRect(startX, buttonY, buttonSize, buttonSize);
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX, buttonY, buttonSize, buttonSize);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(gamePaused ? '▶' : '⏸', startX + buttonSize / 2, buttonY + 18);
+
+            // Music button
+            ctx.fillStyle = musicEnabled ? 'rgba(0, 217, 255, 0.8)' : 'rgba(80, 80, 80, 0.8)';
+            ctx.fillRect(startX + buttonSpacing, buttonY, buttonSize, buttonSize);
+            ctx.strokeStyle = '#00d9ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX + buttonSpacing, buttonY, buttonSize, buttonSize);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('♫', startX + buttonSpacing + buttonSize / 2, buttonY + 18);
+
+            // SFX button
+            ctx.fillStyle = sfxEnabled ? 'rgba(0, 217, 255, 0.8)' : 'rgba(80, 80, 80, 0.8)';
+            ctx.fillRect(startX + buttonSpacing * 2, buttonY, buttonSize, buttonSize);
+            ctx.strokeStyle = '#00d9ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX + buttonSpacing * 2, buttonY, buttonSize, buttonSize);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText('🔊', startX + buttonSpacing * 2 + buttonSize / 2, buttonY + 18);
+
+            ctx.restore();
         }
 
         function gameLoop() {

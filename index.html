@@ -257,7 +257,6 @@
             }
 
             #mobileKeyboard {
-                display: flex !important;
                 position: fixed;
                 bottom: 0;
                 left: 0;
@@ -268,6 +267,7 @@
                 padding: 5px;
                 gap: 3px;
                 overflow-y: auto;
+                /* display is controlled by JavaScript based on game state */
             }
 
             .key-btn {
@@ -627,6 +627,41 @@
             background: #ff1744;
             box-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
         }
+
+        /* Game Stats Display */
+        #gameStats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            padding: 5px 10px;
+            background: rgba(220, 20, 60, 0.2);
+            border: 1px solid #dc143c;
+            border-radius: 5px;
+        }
+
+        .stat-label {
+            color: #c77dff;
+            font-size: 11px;
+        }
+
+        .stat-value {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Hide mobile keyboard by default (shown only during gameplay) */
+        #mobileKeyboard {
+            display: none;
+        }
     </style>
 </head>
 
@@ -705,6 +740,9 @@
 
                 <div id="nameInputModal">
                     <h2>🎉 NEW HIGH SCORE!</h2>
+                    <div id="gameStats">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
                     <p>Enter your name:</p>
                     <input type="text" id="playerNameInput" maxlength="15" placeholder="Your Name">
                     <button id="saveScoreBtn">SAVE SCORE</button>
@@ -849,6 +887,7 @@
         let gamePaused = false;
         let score = 0;
         let wave = 1;
+        const MAX_WAVE = 25; // Game ends at wave 25
         let enemies = [];
         let bullets = [];
         let particles = [];
@@ -867,6 +906,13 @@
         let snapsAvailable = 0;
         let snapsEarned = 0;
         let nextSnapThreshold = 25; // First snap at 25 words
+
+        // Typing Stats for Game Over
+        let gameStartTime = 0;
+        let totalKeystrokes = 0;
+        let correctKeystrokes = 0;
+        let wrongKeystrokes = 0;
+        let totalWordsTyped = 0;
 
         // Player Object (must be created before resizeCanvas is called)
         const player = {
@@ -1223,12 +1269,16 @@
 
             const letter = key.toLowerCase();
 
+            // Track total keystrokes
+            totalKeystrokes++;
+
             // If we have a locked target
             if (lockedEnemy) {
                 const nextLetter = lockedEnemy.getRemainingWord()[0];
 
                 if (letter === nextLetter.toLowerCase()) {
                     // Correct letter!
+                    correctKeystrokes++;
                     lockedEnemy.typedIndex++;
                     typedLetters += letter;
 
@@ -1240,18 +1290,24 @@
                         // Mark enemy as word complete - don't destroy yet
                         // The last bullet will trigger destruction when it hits
                         lockedEnemy.wordComplete = true;
+                        totalWordsTyped++;
                         lockedEnemy = null;
                         typedLetters = '';
                     }
 
                     updateCurrentWordDisplay();
+                } else {
+                    // Wrong letter - track mistake
+                    wrongKeystrokes++;
                 }
-                // Wrong letter - do nothing (player must complete current word)
             } else {
                 // No locked target - try to find an enemy that starts with this letter
+                let foundMatch = false;
                 for (const enemy of enemies) {
                     if (enemy.word[0].toLowerCase() === letter) {
                         // Lock onto this enemy
+                        correctKeystrokes++;
+                        foundMatch = true;
                         lockedEnemy = enemy;
                         lockedEnemy.typedIndex = 1;
                         typedLetters = letter;
@@ -1270,6 +1326,10 @@
                         updateCurrentWordDisplay();
                         break;
                     }
+                }
+                // If no match found, count as wrong keystroke
+                if (!foundMatch) {
+                    wrongKeystrokes++;
                 }
             }
         }
@@ -1404,10 +1464,81 @@
             document.getElementById('finalScore').textContent = score;
             createExplosion(player.x, player.y, '#ff3366');
 
+            // Hide mobile keyboard on game over
+            const mobileKeyboard = document.getElementById('mobileKeyboard');
+            if (mobileKeyboard) mobileKeyboard.style.display = 'none';
+
+            // Calculate typing stats
+            const gameTime = (Date.now() - gameStartTime) / 1000 / 60; // in minutes
+            const wpm = gameTime > 0 ? Math.round(totalWordsTyped / gameTime) : 0;
+            const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 0;
+            const mistakePercent = totalKeystrokes > 0 ? Math.round((wrongKeystrokes / totalKeystrokes) * 100) : 0;
+
+            // Update stats display
+            const statsContainer = document.getElementById('gameStats');
+            if (statsContainer) {
+                statsContainer.innerHTML = `
+                    <div class="stat-item"><span class="stat-label">WPM:</span> <span class="stat-value">${wpm}</span></div>
+                    <div class="stat-item"><span class="stat-label">Accuracy:</span> <span class="stat-value">${accuracy}%</span></div>
+                    <div class="stat-item"><span class="stat-label">Mistakes:</span> <span class="stat-value">${mistakePercent}%</span></div>
+                    <div class="stat-item"><span class="stat-label">Words:</span> <span class="stat-value">${totalWordsTyped}</span></div>
+                `;
+            }
+
             // Show name input after a brief delay for explosion effect
             setTimeout(() => {
                 showNameInput();
             }, 500);
+        }
+
+        function gameVictory() {
+            gameState = 'victory';
+            gamePaused = false;
+
+            // Hide mobile keyboard
+            const mobileKeyboard = document.getElementById('mobileKeyboard');
+            if (mobileKeyboard) mobileKeyboard.style.display = 'none';
+
+            // Calculate typing stats
+            const gameTime = (Date.now() - gameStartTime) / 1000 / 60; // in minutes
+            const wpm = gameTime > 0 ? Math.round(totalWordsTyped / gameTime) : 0;
+            const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 0;
+            const mistakePercent = totalKeystrokes > 0 ? Math.round((wrongKeystrokes / totalKeystrokes) * 100) : 0;
+
+            // Update stats display with victory message
+            const statsContainer = document.getElementById('gameStats');
+            if (statsContainer) {
+                statsContainer.innerHTML = `
+                    <div class="stat-item"><span class="stat-label">WPM:</span> <span class="stat-value">${wpm}</span></div>
+                    <div class="stat-item"><span class="stat-label">Accuracy:</span> <span class="stat-value">${accuracy}%</span></div>
+                    <div class="stat-item"><span class="stat-label">Mistakes:</span> <span class="stat-value">${mistakePercent}%</span></div>
+                    <div class="stat-item"><span class="stat-label">Words:</span> <span class="stat-value">${totalWordsTyped}</span></div>
+                `;
+            }
+
+            // Change modal title to victory
+            const modal = document.getElementById('nameInputModal');
+            const title = modal.querySelector('h2');
+            if (title) {
+                title.textContent = '🏆 UNIVERSE SAVED! 🏆';
+            }
+
+            // Add bonus score for victory
+            score += 5000;
+            document.getElementById('finalScore').textContent = score;
+
+            // Create massive celebration explosion
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * CANVAS_WIDTH;
+                    const y = Math.random() * CANVAS_HEIGHT;
+                    createExplosion(x, y, ['#ffd700', '#ff3366', '#00ff88', '#00d9ff'][Math.floor(Math.random() * 4)]);
+                }, i * 100);
+            }
+
+            setTimeout(() => {
+                showNameInput();
+            }, 1000);
         }
 
         function startGame() {
@@ -1430,9 +1561,21 @@
             nextSnapThreshold = 25;
             updateSnapUI();
 
+            // Reset typing stats
+            gameStartTime = Date.now();
+            totalKeystrokes = 0;
+            correctKeystrokes = 0;
+            wrongKeystrokes = 0;
+            totalWordsTyped = 0;
+
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('gameOver').style.display = 'none';
             document.getElementById('nameInputModal').style.display = 'none';
+
+            // Show mobile keyboard during gameplay
+            const mobileKeyboard = document.getElementById('mobileKeyboard');
+            if (mobileKeyboard) mobileKeyboard.style.display = 'flex';
+
             updateUI();
             updateCurrentWordDisplay();
 
@@ -1501,7 +1644,19 @@
             // Increase difficulty over time
             if (score > wave * 200) {
                 wave++;
-                spawnInterval = Math.max(1000, ENEMY_SPAWN_RATE - wave * 150);
+
+                // Victory condition - beat wave 25!
+                if (wave > MAX_WAVE) {
+                    gameVictory();
+                    return;
+                }
+
+                // Progressive difficulty scaling
+                // Wave 1: ~15-30 WPM difficulty, Wave 25: ~80-120 WPM difficulty
+                // This affects spawn interval and enemy speed
+                const difficultyFactor = 1 + (wave - 1) * 0.15; // 1x at wave 1, ~4.6x at wave 25
+                spawnInterval = Math.max(500, ENEMY_SPAWN_RATE - wave * 80);
+
                 updateUI();
             }
 

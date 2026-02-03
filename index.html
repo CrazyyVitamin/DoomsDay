@@ -158,21 +158,28 @@
         /* Mobile Keyboard */
         #mobileKeyboard {
             display: none;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             gap: 5px;
             max-width: 100%;
             padding: 10px;
-            background: rgba(10, 0, 30, 0.9);
+            background: transparent;
             border-radius: 10px;
-            border: 2px solid #dc143c;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            margin-bottom: 2px;
         }
 
         .key-btn {
             width: 32px;
             height: 40px;
-            background: linear-gradient(180deg, #2a1a3e 0%, #1a0a2e 100%);
-            border: 2px solid #c77dff;
+            background: rgba(42, 26, 62, 0.65);
+            border: 2px solid rgba(199, 125, 255, 0.8);
             border-radius: 6px;
             color: #ffd700;
             font-size: 16px;
@@ -258,15 +265,17 @@
 
             #mobileKeyboard {
                 position: fixed;
-                bottom: 0;
+                bottom: 10px;
                 left: 0;
                 right: 0;
-                height: 30vh;
+                height: auto;
+                max-height: 35vh;
                 z-index: 1000;
-                background: rgba(10, 0, 30, 0.95);
-                padding: 5px;
-                gap: 3px;
-                overflow-y: auto;
+                background: transparent;
+                padding: 10px 5px;
+                gap: 5px;
+                display: none;
+                flex-direction: column;
                 /* display is controlled by JavaScript based on game state */
             }
 
@@ -764,33 +773,39 @@
 
         <!-- Mobile Keyboard -->
         <div id="mobileKeyboard">
-            <button class="key-btn">Q</button>
-            <button class="key-btn">W</button>
-            <button class="key-btn">E</button>
-            <button class="key-btn">R</button>
-            <button class="key-btn">T</button>
-            <button class="key-btn">Y</button>
-            <button class="key-btn">U</button>
-            <button class="key-btn">I</button>
-            <button class="key-btn">O</button>
-            <button class="key-btn">P</button>
-            <button class="key-btn">A</button>
-            <button class="key-btn">S</button>
-            <button class="key-btn">D</button>
-            <button class="key-btn">F</button>
-            <button class="key-btn">G</button>
-            <button class="key-btn">H</button>
-            <button class="key-btn">J</button>
-            <button class="key-btn">K</button>
-            <button class="key-btn">L</button>
-            <button class="key-btn">Z</button>
-            <button class="key-btn">X</button>
-            <button class="key-btn">C</button>
-            <button class="key-btn">V</button>
-            <button class="key-btn">B</button>
-            <button class="key-btn">N</button>
-            <button class="key-btn">M</button>
-            <button class="key-btn special" id="snapBtn">⚡ SNAP</button>
+            <div class="keyboard-row">
+                <button class="key-btn">Q</button>
+                <button class="key-btn">W</button>
+                <button class="key-btn">E</button>
+                <button class="key-btn">R</button>
+                <button class="key-btn">T</button>
+                <button class="key-btn">Y</button>
+                <button class="key-btn">U</button>
+                <button class="key-btn">I</button>
+                <button class="key-btn">O</button>
+                <button class="key-btn">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key-btn">A</button>
+                <button class="key-btn">S</button>
+                <button class="key-btn">D</button>
+                <button class="key-btn">F</button>
+                <button class="key-btn">G</button>
+                <button class="key-btn">H</button>
+                <button class="key-btn">J</button>
+                <button class="key-btn">K</button>
+                <button class="key-btn">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key-btn">Z</button>
+                <button class="key-btn">X</button>
+                <button class="key-btn">C</button>
+                <button class="key-btn">V</button>
+                <button class="key-btn">B</button>
+                <button class="key-btn">N</button>
+                <button class="key-btn">M</button>
+                <button class="key-btn special" id="snapBtn">⚡ SNAP</button>
+            </div>
         </div>
     </div> <!-- End gameContainer -->
 
@@ -872,7 +887,7 @@
             // Update game constants
             CANVAS_WIDTH = canvasWidth;
             CANVAS_HEIGHT = canvasHeight;
-            PLAYER_Y = CANVAS_HEIGHT - 60;
+            PLAYER_Y = CANVAS_HEIGHT - 30; // Consistent with ship position fix
 
             // Update player position if game is running
             if (typeof player !== 'undefined') {

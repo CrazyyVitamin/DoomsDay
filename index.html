@@ -269,17 +269,18 @@
             #mobileKeyboard {
                 position: fixed;
                 bottom: 10px;
-                left: 0;
-                right: 0;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
                 height: auto;
                 max-height: 35vh;
                 z-index: 1000;
                 background: transparent;
-                padding: 10px 5px;
+                padding: 10px 0px;
                 gap: 5px;
                 display: none;
                 flex-direction: column;
-                /* display is controlled by JavaScript based on game state */
+                /* width is controlled by JavaScript in resizeCanvas */
             }
 
             .key-btn {
@@ -833,18 +834,31 @@
         let availableWords = [...ALL_WORDS];
 
         function getRandomWord() {
+            // Task 2: Initial waves (1-6) should not contain 7+ letter words
+            let pool = availableWords;
+            if (wave <= 6) {
+                pool = availableWords.filter(w => w.length < 7);
+                // If we ran out of short words, fall back to all available
+                if (pool.length === 0) pool = availableWords;
+            }
+
             // Reset if all words have been used
             if (availableWords.length === 0) {
                 usedWords.clear();
                 availableWords = [...ALL_WORDS];
+                pool = availableWords; // reset pool too
             }
 
-            // Get random word from available pool
-            const randomIndex = Math.floor(Math.random() * availableWords.length);
-            const word = availableWords[randomIndex];
+            // Get random word from pool
+            const randomIndex = Math.floor(Math.random() * pool.length);
+            const word = pool[randomIndex];
 
-            // Track usage
-            availableWords.splice(randomIndex, 1);
+            // Track usage from BOTH pool and availableWords
+            // (we must remove it from availableWords to track properly)
+            const mainIndex = availableWords.indexOf(word);
+            if (mainIndex > -1) {
+                availableWords.splice(mainIndex, 1);
+            }
             usedWords.add(word);
 
             return word;
@@ -900,8 +914,13 @@
                 player.x = CANVAS_WIDTH / 2;
                 player.y = PLAYER_Y;
             }
-        }
 
+            // Align mobile keyboard with canvas
+            const mobileKeyboard = document.getElementById('mobileKeyboard');
+            if (mobileKeyboard) {
+                mobileKeyboard.style.width = CANVAS_WIDTH + 'px';
+            }
+        }
 
         // Game State
         let gameState = 'start'; // 'start', 'playing', 'gameOver', 'paused'

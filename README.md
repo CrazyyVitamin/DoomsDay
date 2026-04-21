@@ -28,6 +28,12 @@ An epic typing shooter game inspired by the Marvel Cinematic Universe. Battle wa
 - Screen-wide snap explosion animation
 - Dynamic targeting lines
 
+### Recent Enhancements (v1.1)
+- 🐛 **Bug Fixes**: Repaired duplicated HTML tags, excessive particle counts on hit, and other JavaScript syntax errors to improve stability.
+- 🔠 **Expanded Vocabulary**: Integrated `words.js` to provide a massive 1000+ word database categorized into easy, medium, and hard difficulty buckets.
+- 🎯 **Targeting Accuracy**: Added logic to prevent enemies from spawning simultaneously with the exact same starting letter, eliminating typing lock-on conflicts.
+- 🎵 **Audio Reliability**: Improved Web Audio API integration with `try/catch` fallbacks to gracefully handle browser autoplay restrictions.
+
 ## 🎯 How to Play
 
 ### Controls
